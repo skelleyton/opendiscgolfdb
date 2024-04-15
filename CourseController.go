@@ -104,5 +104,21 @@ func (con *Controller) ListCourses(c *gin.Context) {
 }
 
 func (con *Controller) Search(c *gin.Context) {
+	boundingBoxString := c.Query("bounding_box")
 
+	if boundingBoxString == "" {
+		c.JSON(400, "Invalid Input")
+	}
+
+	var boundingBox BoundingBox
+
+	if err := json.Unmarshal([]byte(boundingBoxString), &boundingBox); err != nil {
+		log.Fatal(err)
+	}
+
+	if courses, err := con.Database.SearchCourses(boundingBox); err != nil {
+		c.JSON(400, err.(error).Error())
+	} else {
+		c.JSON(200, courses)
+	}
 }

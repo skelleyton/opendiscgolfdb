@@ -7,14 +7,23 @@ import (
 	"os"
 )
 
+/* Coordinates consists of 2 floats in an array, first element is
+longitude and second is latitude */
+type Coordinates [2]float32
+
+/* BoundingBox is a set of two coordinates, the top left and the
+bottom right of a box */
+type BoundingBox [2]Coordinates
+
 type Geometry struct {
-	Type        string    `json:"type"`
-	Coordinates []float32 `json:"coordinates"`
+	Type        string      `json:"type"`
+	Coordinates Coordinates `json:"coordinates"`
 }
 
 type CourseProperties struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	ZipCode string `json:"zipCode"`
 }
 
 type Course struct {
@@ -41,6 +50,33 @@ func (d *DB) ListCourses() *[]Course {
 	return d.DB
 }
 
+func (d *DB) SearchCourses(boundingBox BoundingBox) (*[]Course, error) {
+	if (boundingBox != BoundingBox{}) {
+		boundingBox, err := mapBoundingBox(boundingBox)
+
+		if err != nil {
+			return &[]Course{Course{}}, err
+		}
+
+		var courses []Course
+
+		for _, val := range *d.DB {
+			courseCoords := val.Geometry.Coordinates
+
+			if boundingBox[0][0] < courseCoords[0] &&
+				boundingBox[1][0] > courseCoords[0] &&
+				boundingBox[0][1] < courseCoords[1] &&
+				boundingBox[1][1] > courseCoords[1] {
+				courses = append(courses, val)
+			}
+
+		}
+		return &courses, nil
+	}
+
+	return &[]Course{Course{}}, errors.New("invalid_search_param")
+}
+
 func NewDB(path string) *DB {
 	dbPath := "./db.json"
 
@@ -60,4 +96,20 @@ func NewDB(path string) *DB {
 	}
 
 	return &DB{db}
+}
+
+func mapBoundingBox(boundingBox BoundingBox) (BoundingBox, error) {
+	firstCoord := boundingBox[0]
+	secondCoord := boundingBox[1]
+
+	if firstCoord[0] < secondCoord[0] && firstCoord[1] < secondCoord[1] {
+		return boundingBox, nil
+	} else if firstCoord[0] > secondCoord[0] && firstCoord[1] > secondCoord[1] {
+		return BoundingBox{
+			secondCoord,
+			firstCoord,
+		}, nil
+	} else {
+		return BoundingBox{}, errors.New("invalid_bounding_box")
+	}
 }
