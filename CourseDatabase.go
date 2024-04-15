@@ -1,19 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
-)
-
-type GeometryType string
-
-const (
-	Point GeometryType = "Point"
-	Line  GeometryType = "Line"
+	"log"
+	"os"
 )
 
 type Geometry struct {
-	Type        GeometryType `json:"type"`
-	Coordinates []float32    `json:"coordinates"`
+	Type        string    `json:"type"`
+	Coordinates []float32 `json:"coordinates"`
 }
 
 type CourseProperties struct {
@@ -43,4 +39,25 @@ func (d *DB) GetCourseById(id *string) (Course, error) {
 
 func (d *DB) ListCourses() *[]Course {
 	return d.DB
+}
+
+func NewDB(path string) *DB {
+	dbPath := "./db.json"
+
+	if path != "" {
+		dbPath = path
+	}
+	dbByte, err := os.ReadFile(dbPath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var db *[]Course
+
+	if err := json.Unmarshal(dbByte, &db); err != nil {
+		log.Fatal(err)
+	}
+
+	return &DB{db}
 }
