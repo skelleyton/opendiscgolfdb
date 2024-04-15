@@ -1,0 +1,58 @@
+[
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        38.82583,
+        -94.74809
+      ]
+    },
+    "properties": {
+      "id": "uuid1",
+      "name": "Heritage Park"
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        38.87159,
+        -94.86555
+      ]
+    },
+    "properties": {
+      "id": "uuid2",
+      "name": "Lakeside Hills"
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        38.841163,
+        -94.928156
+      ]
+    },
+    "properties": {
+      "id": "uuid3",
+      "name": "Gardner"
+    }
+  },
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        38.887981,
+        -94.845737
+      ]
+    },
+    "properties": {
+      "id": "uuid4",
+      "name": "Prarie Center Park"
+    }
+  }
+]
