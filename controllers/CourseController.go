@@ -1,10 +1,11 @@
-package main
+package controllers
 
 import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"opendgdb/databases"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,10 @@ import (
 
 type Controller struct {
 	r *gin.Engine
-	Database *DB
+	Database *databases.CourseDB
 }
 
-func NewCourseController(r *gin.Engine, db *DB) {
+func NewCourseController(r *gin.Engine, db *databases.CourseDB) {
 	con := &Controller{r, db}
 
 	courseGroup := r.Group("course")
@@ -45,7 +46,7 @@ func (con *Controller) ListCourses(c *gin.Context) {
 	}
 
 	type Response struct {
-		Courses []Course `json:"courses"`
+		Courses []databases.Course `json:"courses"`
 		Count   int      `json:"count"`
 		NextKey string   `json:"nextKey"`
 	}
@@ -126,7 +127,7 @@ func (con *Controller) Search(c *gin.Context) {
 		return
 	}
 
-	var boundingBox BoundingBox
+	var boundingBox databases.BoundingBox
 
 	if err := json.Unmarshal([]byte(boundingBoxString), &boundingBox); err != nil {
 		c.JSON(400, "invalid_bounding_box")

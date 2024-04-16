@@ -1,4 +1,4 @@
-module github.com/skelleyton/opendgdb
+module opendgdb
 
 go 1.21.4
 

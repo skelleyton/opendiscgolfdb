@@ -1,4 +1,4 @@
-package main
+package databases
 
 import (
 	"encoding/json"
@@ -32,11 +32,32 @@ type Course struct {
 	Properties CourseProperties `json:"properties"`
 }
 
-type DB struct {
+type CourseDB struct {
 	DB *[]Course
 }
 
-func (d *DB) GetCourseById(id *string) (Course, error) {
+func NewCourseDB(path string) *CourseDB {
+	dbPath := "./db.json"
+
+	if path != "" {
+		dbPath = path
+	}
+	dbByte, err := os.ReadFile(dbPath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var db *[]Course
+
+	if err := json.Unmarshal(dbByte, &db); err != nil {
+		log.Fatal(err)
+	}
+
+	return &CourseDB{db}
+}
+
+func (d *CourseDB) GetCourseById(id *string) (Course, error) {
 	for _, value := range *d.DB {
 		if value.Properties.ID == *id {
 			return value, nil
@@ -46,11 +67,11 @@ func (d *DB) GetCourseById(id *string) (Course, error) {
 	return Course{}, errors.New("CourseNotExist")
 }
 
-func (d *DB) ListCourses() *[]Course {
+func (d *CourseDB) ListCourses() *[]Course {
 	return d.DB
 }
 
-func (d *DB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Course, error) {
+func (d *CourseDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Course, error) {
 	if (boundingBox != BoundingBox{}) {
 		boundingBox, err := mapBoundingBox(boundingBox)
 
@@ -75,27 +96,6 @@ func (d *DB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Course, err
 	}
 
 	return nil, errors.New("invalid_search_param")
-}
-
-func NewDB(path string) *DB {
-	dbPath := "./db.json"
-
-	if path != "" {
-		dbPath = path
-	}
-	dbByte, err := os.ReadFile(dbPath)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var db *[]Course
-
-	if err := json.Unmarshal(dbByte, &db); err != nil {
-		log.Fatal(err)
-	}
-
-	return &DB{db}
 }
 
 func mapBoundingBox(boundingBox BoundingBox) (BoundingBox, error) {
