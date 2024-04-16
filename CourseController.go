@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -57,14 +57,15 @@ func (con *Controller) ListCourses(c *gin.Context) {
 		readLen, err := base64Encoder.Decode(nextKeyByte, []byte(nextKeyStr))
 
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(400, "invalid_nextkey")
+			return
 		}
 
 		nextKeySlice := nextKeyByte[:readLen]
 
 		if err := json.Unmarshal(nextKeySlice, &nextKey); err != nil {
-			log.Print("Failed to Unmarshal nextkey")
-			log.Fatal(err)
+			c.JSON(400, "invalid_nextkey")
+			return
 		}
 
 		viewedRecords = nextKey.ViewedRecords
@@ -91,9 +92,10 @@ func (con *Controller) ListCourses(c *gin.Context) {
 		data, err := json.Marshal(responseNextKey)
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Print("Faild to marshal repsonseNextKey")
+		} else {
+			encodedResponseNextKey = base64Encoder.EncodeToString(data)
 		}
-		encodedResponseNextKey = base64Encoder.EncodeToString(data)
 	}
 
 	c.JSON(200, Response{
