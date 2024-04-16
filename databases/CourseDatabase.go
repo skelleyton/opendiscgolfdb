@@ -33,7 +33,7 @@ type Course struct {
 }
 
 type CourseDB struct {
-	DB *[]Course
+	db *[]Course
 }
 
 func NewCourseDB(path string) *CourseDB {
@@ -58,7 +58,7 @@ func NewCourseDB(path string) *CourseDB {
 }
 
 func (d *CourseDB) GetCourseById(id *string) (Course, error) {
-	for _, value := range *d.DB {
+	for _, value := range *d.db {
 		if value.Properties.ID == *id {
 			return value, nil
 		}
@@ -68,7 +68,7 @@ func (d *CourseDB) GetCourseById(id *string) (Course, error) {
 }
 
 func (d *CourseDB) ListCourses() *[]Course {
-	return d.DB
+	return d.db
 }
 
 func (d *CourseDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Course, error) {
@@ -81,7 +81,7 @@ func (d *CourseDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Cours
 
 		var courses []Course
 
-		for _, val := range *d.DB {
+		for _, val := range *d.db {
 			courseCoords := val.Geometry.Coordinates
 
 			if boundingBox[0][0] < courseCoords[0] &&
@@ -96,6 +96,18 @@ func (d *CourseDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Cours
 	}
 
 	return nil, errors.New("invalid_search_param")
+}
+
+func (d *CourseDB) SearchCoursesByPostCode(postCode string) *[]Course {
+	var courses []Course
+
+	for _, val := range *d.db {
+		if val.Properties.ZipCode == postCode {
+			courses = append(courses, val)
+		}
+	}
+
+	return &courses
 }
 
 func mapBoundingBox(boundingBox BoundingBox) (BoundingBox, error) {

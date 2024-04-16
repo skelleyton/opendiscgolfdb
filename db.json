@@ -10,7 +10,8 @@
     },
     "properties": {
       "id": "uuid1",
-      "name": "Heritage Park"
+      "name": "Heritage Park",
+      "zipCode": "66062"
     }
   },
   {
@@ -24,7 +25,8 @@
     },
     "properties": {
       "id": "uuid2",
-      "name": "Lakeside Hills"
+      "name": "Lakeside Hills",
+      "zipCode": "66061"
     }
   },
   {
@@ -38,7 +40,8 @@
     },
     "properties": {
       "id": "uuid3",
-      "name": "Gardner"
+      "name": "Gardner",
+      "zipCode": "66030"
     }
   },
   {
@@ -52,7 +55,8 @@
     },
     "properties": {
       "id": "uuid4",
-      "name": "Prarie Center Park"
+      "name": "Prarie Center Park",
+      "zipCode": "66061"
     }
   }
 ]
