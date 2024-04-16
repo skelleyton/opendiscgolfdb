@@ -50,7 +50,7 @@ func (d *DB) ListCourses() *[]Course {
 	return d.DB
 }
 
-func (d *DB) SearchCourses(boundingBox BoundingBox) (*[]Course, error) {
+func (d *DB) SearchCoursesByBoundingBox(boundingBox BoundingBox) (*[]Course, error) {
 	if (boundingBox != BoundingBox{}) {
 		boundingBox, err := mapBoundingBox(boundingBox)
 
@@ -74,7 +74,7 @@ func (d *DB) SearchCourses(boundingBox BoundingBox) (*[]Course, error) {
 		return &courses, nil
 	}
 
-	return &[]Course{Course{}}, errors.New("invalid_search_param")
+	return nil, errors.New("invalid_search_param")
 }
 
 func NewDB(path string) *DB {

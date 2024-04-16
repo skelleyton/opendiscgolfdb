@@ -10,11 +10,7 @@ func main() {
 	r := gin.Default()
 
 	database := NewDB("")
-	controller := Controller{Database: database}
-
-	r.GET("/course/:courseId", controller.GetCourse)
-	r.GET("/courses", controller.ListCourses)
-	r.GET("/courses/search", controller.Search)
+	NewCourseController(r, database)
 
 	if err := r.Run(); err != nil {
 		log.Fatal("Failed to initialize server")

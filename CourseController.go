@@ -11,7 +11,20 @@ import (
 )
 
 type Controller struct {
+	r *gin.Engine
 	Database *DB
+}
+
+func NewCourseController(r *gin.Engine, db *DB) {
+	con := &Controller{r, db}
+
+	courseGroup := r.Group("course")
+	coursesGroup := r.Group("courses")
+
+	courseGroup.GET(":courseId", con.GetCourse)
+
+	coursesGroup.GET("", con.ListCourses)
+	coursesGroup.GET("search", con.Search)
 }
 
 func (con *Controller) GetCourse(c *gin.Context) {
@@ -120,7 +133,7 @@ func (con *Controller) Search(c *gin.Context) {
 		return
 	}
 
-	if courses, err := con.Database.SearchCourses(boundingBox); err != nil {
+	if courses, err := con.Database.SearchCoursesByBoundingBox(boundingBox); err != nil {
 		c.JSON(400, err.(error).Error())
 	} else {
 		c.JSON(200, courses)
