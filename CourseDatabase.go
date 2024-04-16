@@ -7,12 +7,12 @@ import (
 	"os"
 )
 
-/* Coordinates consists of 2 floats in an array, first element is
-longitude and second is latitude */
+// Coordinates consists of 2 floats in an array, first element is
+// longitude and second is latitude
 type Coordinates [2]float32
 
-/* BoundingBox is a set of two coordinates, the top left and the
-bottom right of a box */
+// BoundingBox is a set of two coordinates, the top left and the
+// bottom right of a box
 type BoundingBox [2]Coordinates
 
 type Geometry struct {
@@ -55,7 +55,7 @@ func (d *DB) SearchCourses(boundingBox BoundingBox) (*[]Course, error) {
 		boundingBox, err := mapBoundingBox(boundingBox)
 
 		if err != nil {
-			return &[]Course{Course{}}, err
+			return nil, err
 		}
 
 		var courses []Course
