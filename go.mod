@@ -1,4 +1,4 @@
-module kelleynet.org/dgcourses
+module github.com/skelleyton/opendgdb
 
 go 1.21.4
 
