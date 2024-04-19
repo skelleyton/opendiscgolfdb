@@ -12,7 +12,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	database := databases.NewCourseDB("")
+	database := databases.NewCoursesDB("")
 	controllers.NewCourseController(r, database)
 
 	if err := r.Run(); err != nil {
