@@ -7,31 +7,6 @@ import (
 	"os"
 )
 
-// Coordinates consists of 2 floats in an array, first element is
-// longitude and second is latitude
-type Coordinates [2]float32
-
-// BoundingBox is a set of two coordinates, the top left and the
-// bottom right of a box
-type BoundingBox [2]Coordinates
-
-type Geometry struct {
-	Type        string      `json:"type"`
-	Coordinates Coordinates `json:"coordinates"`
-}
-
-type CourseProperties struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	ZipCode string `json:"zipCode"`
-}
-
-type Course struct {
-	Type       string           `json:"type"`
-	Geometry   Geometry         `json:"geometry"`
-	Properties CourseProperties `json:"properties"`
-}
-
 type CourseDB struct {
 	db *[]Course
 }

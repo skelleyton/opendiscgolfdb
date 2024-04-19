@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	
+
 	"opendgdb/databases"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Controller struct {
-	r *gin.Engine
+	r        *gin.Engine
 	Database *databases.CoursesDB
 }
 
@@ -49,8 +49,8 @@ func (con *Controller) ListCourses(c *gin.Context) {
 
 	type Response struct {
 		Courses []databases.Course `json:"courses"`
-		Count   int      `json:"count"`
-		NextKey string   `json:"nextKey"`
+		Count   int                `json:"count"`
+		NextKey string             `json:"nextKey"`
 	}
 
 	base64Encoder := base64.StdEncoding.WithPadding(-1)
