@@ -109,19 +109,3 @@ func (d *CourseDB) SearchCoursesByPostCode(postCode string) *[]Course {
 
 	return &courses
 }
-
-func mapBoundingBox(boundingBox BoundingBox) (BoundingBox, error) {
-	firstCoord := boundingBox[0]
-	secondCoord := boundingBox[1]
-
-	if firstCoord[0] < secondCoord[0] && firstCoord[1] < secondCoord[1] {
-		return boundingBox, nil
-	} else if firstCoord[0] > secondCoord[0] && firstCoord[1] > secondCoord[1] {
-		return BoundingBox{
-			secondCoord,
-			firstCoord,
-		}, nil
-	} else {
-		return BoundingBox{}, errors.New("invalid_bounding_box")
-	}
-}
