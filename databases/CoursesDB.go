@@ -37,6 +37,7 @@ type Course struct {
 
 type CoursesDB struct {
 	cluster *gocb.Cluster
+	scope   *gocb.Scope
 }
 
 func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesDB {
@@ -49,6 +50,8 @@ func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesD
 
 	cluster, err := gocb.Connect("127.0.0.1", options)
 
+	scope := cluster.Bucket("courses").Scope("courses")
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,16 +60,16 @@ func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesD
 		log.Fatal(err)
 	}
 
-	return &CoursesDB{cluster}
+	return &CoursesDB{cluster, scope}
 }
 
 func (db *CoursesDB) GetCourseById(id string) (*Course, error) {
-	query := "SELECT course.* from courses.courses.courses course WHERE course.properties.id = $id"
+	query := "SELECT course.* from courses course WHERE course.properties.id = $id"
 
 	params := make(map[string]interface{}, 1)
 	params["id"] = id
 
-	result, err := db.cluster.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
+	result, err := db.scope.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
 
 	if err != nil {
 		log.Print(err)
@@ -93,9 +96,9 @@ func (db *CoursesDB) GetCourseById(id string) (*Course, error) {
 }
 
 func (db *CoursesDB) ListCourses() (*[]Course, error) {
-	query := "SELECT course.* from courses.courses.courses course"
+	query := "SELECT course.* from courses course"
 
-	result, err := db.cluster.Query(query, &gocb.QueryOptions{Adhoc: true})
+	result, err := db.scope.Query(query, &gocb.QueryOptions{Adhoc: true})
 
 	if err != nil {
 		log.Print(err)
@@ -124,14 +127,14 @@ func (db *CoursesDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) ([]Cour
 		return nil, err
 	}
 
-	query := "select course.* from courses.courses.courses course WHERE course.geometry.coordinates[0] BETWEEN $topLng AND $bottomLng AND course.geometry.coordinates[1] BETWEEN $topLat AND $bottomLat"
+	query := "select course.* from courses course WHERE course.geometry.coordinates[0] BETWEEN $topLng AND $bottomLng AND course.geometry.coordinates[1] BETWEEN $topLat AND $bottomLat"
 	params := make(map[string]interface{}, 4)
 	params["topLng"] = mappedBoundingBox[0][0]
 	params["topLat"] = mappedBoundingBox[0][1]
 	params["bottomLng"] = mappedBoundingBox[1][0]
 	params["bottomLat"] = mappedBoundingBox[1][1]
 
-	result, err := db.cluster.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
+	result, err := db.scope.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
 
 	if err != nil {
 		return nil, err
@@ -153,12 +156,12 @@ func (db *CoursesDB) SearchCoursesByBoundingBox(boundingBox BoundingBox) ([]Cour
 }
 
 func (db *CoursesDB) SearchCoursesByPostCode(zipCode string) ([]Course, error) {
-	query := "SELECT course.* from courses.courses.courses course WHERE course.properties.zipCode = $zipCode"
+	query := "SELECT course.* from courses course WHERE course.properties.zipCode = $zipCode"
 
 	params := make(map[string]interface{}, 1)
 	params["zipCode"] = zipCode
 
-	result, err := db.cluster.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
+	result, err := db.scope.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
 
 	if err != nil {
 		return nil, err
