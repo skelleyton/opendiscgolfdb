@@ -48,7 +48,15 @@ func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesD
 		},
 	}
 
-	cluster, err := gocb.Connect("127.0.0.1", options)
+	var connString string
+
+	if connectionString != "" {
+		connString = connectionString
+	} else {
+		connString = "127.0.0.1"
+	}
+
+	cluster, err := gocb.Connect(connString, options)
 
 	scope := cluster.Bucket("courses").Scope("courses")
 
