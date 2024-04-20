@@ -8,17 +8,7 @@ import (
 	"strings"
 )
 
-type Config struct {
-	DbUser  string `dotenv:"DB_USER"`
-	DbPass  string `dotenv:"DB_PASSWORD"`
-	ConnStr string `dotenv:"CONN_STR"`
-}
-
-type DotenvConfig struct {
-	Config *Config
-}
-
-func NewDotenvConfig(path string) *DotenvConfig {
+func NewDotenvConfig(path string, config any) {
 	dir, err := os.Getwd()
 
 	if err != nil {
@@ -52,14 +42,10 @@ func NewDotenvConfig(path string) *DotenvConfig {
 		configMap[splitVal[0]] = splitVal[1]
 	}
 
-	config := insertToStruct(configMap)
-
-	return &DotenvConfig{config}
+	insertToStruct(configMap, config)
 }
 
-func insertToStruct(configMap map[string]string) *Config {
-	config := &Config{}
-
+func insertToStruct(configMap map[string]string, config any) {
 	structValue := reflect.ValueOf(config).Elem()
 	configType := structValue.Type()
 
@@ -78,6 +64,4 @@ func insertToStruct(configMap map[string]string) *Config {
 			}
 		}
 	}
-
-	return config
 }

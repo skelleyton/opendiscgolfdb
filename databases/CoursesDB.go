@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"opendgdb/utils"
+	"opendgdb/types"
 
 	"github.com/couchbase/gocb/v2"
 )
@@ -40,11 +40,11 @@ type CoursesDB struct {
 	scope   *gocb.Scope
 }
 
-func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesDB {
+func NewCoursesDB(connectionString string, config *types.Config) *CoursesDB {
 	options := gocb.ClusterOptions{
 		Authenticator: gocb.PasswordAuthenticator{
-			Username: config.Config.DbUser,
-			Password: config.Config.DbPass,
+			Username: config.DbUser,
+			Password: config.DbPassword,
 		},
 	}
 

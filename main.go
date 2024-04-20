@@ -5,6 +5,7 @@ import (
 
 	"opendgdb/controllers"
 	"opendgdb/databases"
+	"opendgdb/types"
 	"opendgdb/utils"
 
 	"github.com/gin-gonic/gin"
@@ -13,9 +14,11 @@ import (
 func main() {
 	r := gin.Default()
 
-	config := utils.NewDotenvConfig("")
+	config := &types.Config{}
 
-	database := databases.NewCoursesDB(config.Config.ConnStr, config)
+	utils.NewDotenvConfig("", config)
+
+	database := databases.NewCoursesDB(config.ConnStr, config)
 	controllers.NewCourseController(r, database)
 
 	if err := r.Run(); err != nil {
