@@ -15,7 +15,7 @@ func main() {
 
 	config := utils.NewDotenvConfig("")
 
-	database := databases.NewCoursesDB(config.Config["CONN_STR"], config)
+	database := databases.NewCoursesDB(config.Config.ConnStr, config)
 	controllers.NewCourseController(r, database)
 
 	if err := r.Run(); err != nil {

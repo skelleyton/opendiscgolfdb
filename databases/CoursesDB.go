@@ -43,8 +43,8 @@ type CoursesDB struct {
 func NewCoursesDB(connectionString string, config *utils.DotenvConfig) *CoursesDB {
 	options := gocb.ClusterOptions{
 		Authenticator: gocb.PasswordAuthenticator{
-			Username: config.Config["DB_USER"],
-			Password: config.Config["DB_PASSWORD"],
+			Username: config.Config.DbUser,
+			Password: config.Config.DbPass,
 		},
 	}
 
