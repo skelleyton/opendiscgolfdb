@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"opendgdb/databases"
@@ -87,7 +88,7 @@ func (con *Controller) ListCourses(c *gin.Context) {
 		viewedRecords = nextKey.ViewedRecords
 	}
 
-	courses, err := con.Database.ListCourses()
+	courses, err := con.Database.ListCourses(perPageInt)
 
 	coursesLen := len(*courses)
 
@@ -128,7 +129,13 @@ func (con *Controller) Search(c *gin.Context) {
 	if boundingBoxString != "" {
 		var boundingBox databases.BoundingBox
 
-		if err := json.Unmarshal([]byte(boundingBoxString), &boundingBox); err != nil {
+		decodedBoundingBox, err := url.QueryUnescape(boundingBoxString)
+
+		if err != nil {
+			c.JSON(400, "invalid_bounding_box")
+		}
+
+		if err := json.Unmarshal([]byte(decodedBoundingBox), &boundingBox); err != nil {
 			c.JSON(400, "invalid_bounding_box")
 			return
 		}

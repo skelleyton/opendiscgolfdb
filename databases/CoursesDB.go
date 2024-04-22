@@ -84,29 +84,26 @@ func (db *CoursesDB) GetCourseById(id string) (*Course, error) {
 		return &Course{}, err
 	}
 
-	var courses []Course
+	course := &Course{}
 
-	for result.Next() {
-		var course *Course
-
-		if err := result.Row(&course); err != nil {
-			return &Course{}, err
-		}
-
-		courses = append(courses, *course)
+	if err := result.One(&course); err != nil {
+		return &Course{}, err
 	}
 
-	if len(courses) == 0 {
+	if (*course == Course{}) {
 		return &Course{}, errors.New("not_found")
 	}
 
-	return &courses[0], nil
+	return course, nil
 }
 
-func (db *CoursesDB) ListCourses() (*[]Course, error) {
-	query := "SELECT course.* from courses course"
+func (db *CoursesDB) ListCourses(limit int64) (*[]Course, error) {
+	query := "SELECT course.* from courses course LIMIT $limit"
 
-	result, err := db.scope.Query(query, &gocb.QueryOptions{Adhoc: true})
+	params := make(map[string]interface{})
+	params["limit"] = limit
+
+	result, err := db.scope.Query(query, &gocb.QueryOptions{NamedParameters: params, Adhoc: true})
 
 	if err != nil {
 		log.Print(err)
